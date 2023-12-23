@@ -18,6 +18,29 @@ struct ProspectsView: View {
     @State private var isShowingScanner = false
     @State private var isShowingSortOrderDialog = false
     
+    private let randomData: [(name: String, email: String)] = [
+        ("Alice Johnson", "alice@example.com"),
+        ("Bob Smith", "bob@example.com"),
+        ("Carol Danvers", "carol@example.com"),
+        ("Zack Mayor", "zack@example.com"),
+        ("Katie Lim", "katie@example.com"),
+        ("Tobius Lee", "tobius@example.com"),
+        ("Helen Kim", "helen@example.com"),
+        ("Emily Pilsben", "emily@example.com"),
+        ("Samantha Mill", "samantha@example.com"),
+        ("Michael Brown", "michaelb@example.com"),
+        ("Laura Martin", "lauram@example.com"),
+        ("John Davis", "johnd@example.com"),
+        ("Sarah Wilson", "sarahw@example.com"),
+        ("Jason Clark", "jasonc@example.com"),
+        ("Rebecca Moore", "rebeccam@example.com"),
+        ("Oliver Green", "oliverg@example.com"),
+        ("Emma Turner", "emmat@example.com"),
+        ("Lucas Scott", "lucass@example.com"),
+        ("Sophia Hall", "sophiah@example.com"),
+        ("Ethan Rivera", "ethanr@example.com")
+    ]
+    
     let filter: FilterType
     
     var sortedProspects: [Prospect] {
@@ -66,6 +89,12 @@ struct ProspectsView: View {
                                     Label("Remind Me", systemImage: "bell")
                                 }
                                 .tint(.orange)
+                                
+                                Button(role: .destructive) {
+                                    prospects.remove(prospect)
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
                             }
                         }
                     }
@@ -96,7 +125,10 @@ struct ProspectsView: View {
                 }
             }
             .sheet(isPresented: $isShowingScanner) {
-                CodeScannerView(codeTypes: [.qr], simulatedData: "PaulHudson\npaul@hackingwithswift.com", completion: handleScan)
+                let randomPerson = randomData.randomElement() ?? ("John Doe", "john@example.com")
+                        let simulatedData = "\(randomPerson.name)\n\(randomPerson.email)"
+
+                        CodeScannerView(codeTypes: [.qr], simulatedData: simulatedData, completion: handleScan)
             }
         }
     }
@@ -143,22 +175,25 @@ struct ProspectsView: View {
     
     func addNotification(for prospect: Prospect) {
         let center = UNUserNotificationCenter.current()
-        
+
         let addRequest = {
             let content = UNMutableNotificationContent()
             content.title = "Contact \(prospect.name)"
             content.subtitle = prospect.emailAddress
             content.sound = UNNotificationSound.default
-            
-            var dateComponents = DateComponents()
-            dateComponents.hour = 9
-            //let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-            
+
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 4, repeats: false)
+
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-            center.add(request)
+            center.add(request) { error in
+                if let error = error {
+                    print("Error scheduling notification: \(error)")
+                } else {
+                    print("Notification scheduled!")
+                }
+            }
         }
-        
+
         center.getNotificationSettings { settings in
             if settings.authorizationStatus == .authorized {
                 addRequest()
@@ -166,13 +201,14 @@ struct ProspectsView: View {
                 center.requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
                     if success {
                         addRequest()
-                    } else {
-                        print("D'oh")
+                    } else if let error = error {
+                        print("Error requesting notification permissions: \(error)")
                     }
                 }
             }
         }
     }
+
 }
 
 struct ProspectsView_Previews: PreviewProvider {

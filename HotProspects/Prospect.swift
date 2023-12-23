@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+extension Prospects {
+    func remove(_ prospect: Prospect) {
+        if let index = people.firstIndex(where: { $0.id == prospect.id }) {
+            people.remove(at: index)
+        }
+    }
+}
+
 class Prospect: Identifiable, Codable {
     var id = UUID()
     var name = "Anonymous"
