@@ -4,7 +4,7 @@
 <table>
   <tr>
     <td>
-      <img src="https://github.com/penguin-waddle/HotProspects/assets/123434744/206dad98-7581-47be-90f9-3a2c4a07dba5" alt="Hot Prospects App Demo" width="300" />
+      <img src="https://github.com/penguin-waddle/HotProspects/assets/123434744/206dad98-7581-47be-90f9-3a2c4a07dba5" alt="Hot Prospects App Demo" width="2100" />
     </td>
     <td>
       HotProspects is an iOS app designed for networking at conferences. It simplifies the process of keeping track of people you meet. The app allows users to generate their own QR code containing their details and scan others' codes to add them as contacts for future follow-ups.
